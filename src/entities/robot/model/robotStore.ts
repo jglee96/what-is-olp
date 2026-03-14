@@ -1,33 +1,26 @@
 import { create } from 'zustand'
+import type { JointLimit, RobotStore, TcpPosition, Waypoint } from './types'
 
-// 6-DOF 산업용 로봇 관절 한계 (도 단위)
-const JOINT_LIMITS = [
-  { min: -170, max: 170 }, // J1: 베이스 회전
-  { min: -90,  max: 90  }, // J2: 숄더
-  { min: -70,  max: 135  }, // J3: 엘보우
-  { min: -185, max: 185 }, // J4: 손목 롤
-  { min: -120, max: 120 }, // J5: 손목 피치
-  { min: -350, max: 350 }, // J6: 손목 요
+const JOINT_LIMITS: JointLimit[] = [
+  { min: -170, max: 170 },
+  { min: -90,  max: 90  },
+  { min: -70,  max: 135 },
+  { min: -185, max: 185 },
+  { min: -120, max: 120 },
+  { min: -350, max: 350 },
 ]
 
-const DEFAULT_JOINTS = [0, 20, -30, 0, 0, 0]
+const DEFAULT_JOINTS: number[] = [0, 20, -30, 0, 0, 0]
 
-export const useRobotStore = create((set, get) => ({
-  // 관절 각도 (degrees)
+export const useRobotStore = create<RobotStore>((set, get) => ({
   joints: [...DEFAULT_JOINTS],
   jointLimits: JOINT_LIMITS,
-
-  // 기록된 경로 포인트들
   waypoints: [],
   isPlaying: false,
   playIndex: 0,
   playIntervalId: null,
-
-  // TCP 위치 (forward kinematics로 계산)
-  tcpPosition: { x: 0, y: 0, z: 0 },
-
-  // 선택된 탭
-  activeTab: 'joints', // 'joints' | 'program' | 'io'
+  tcpPosition: { x: '0.000', y: '0.000', z: '0.000' },
+  activeTab: 'joints',
 
   setJoint: (index, value) => {
     const joints = [...get().joints]
@@ -39,7 +32,7 @@ export const useRobotStore = create((set, get) => ({
 
   addWaypoint: () => {
     const { joints, waypoints } = get()
-    const newWaypoint = {
+    const newWaypoint: Waypoint = {
       id: Date.now(),
       name: `P${waypoints.length + 1}`,
       joints: [...joints],
@@ -47,15 +40,12 @@ export const useRobotStore = create((set, get) => ({
     set({ waypoints: [...waypoints, newWaypoint] })
   },
 
-  removeWaypoint: (id) => {
-    set({ waypoints: get().waypoints.filter(w => w.id !== id) })
-  },
+  removeWaypoint: (id) =>
+    set({ waypoints: get().waypoints.filter((w) => w.id !== id) }),
 
   clearWaypoints: () => set({ waypoints: [] }),
 
-  goToWaypoint: (waypoint) => {
-    set({ joints: [...waypoint.joints] })
-  },
+  goToWaypoint: (waypoint) => set({ joints: [...waypoint.joints] }),
 
   startPlayback: () => {
     const { waypoints, isPlaying } = get()
@@ -84,5 +74,5 @@ export const useRobotStore = create((set, get) => ({
 
   setActiveTab: (tab) => set({ activeTab: tab }),
 
-  setTcpPosition: (pos) => set({ tcpPosition: pos }),
+  setTcpPosition: (pos: TcpPosition) => set({ tcpPosition: pos }),
 }))
