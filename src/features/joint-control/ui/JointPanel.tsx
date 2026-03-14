@@ -3,30 +3,38 @@ import { useRobotStore } from '@entities/robot'
 const JOINT_NAMES = ['J1 베이스', 'J2 숄더', 'J3 엘보우', 'J4 손목롤', 'J5 손목피치', 'J6 손목요'] as const
 const JOINT_COLORS = ['#4a90d9', '#357abd', '#2a6099', '#1e4d7a', '#ff6b35', '#ff9500'] as const
 
+// rerender-memo: ~10fps로 갱신되는 TCP 표시를 별도 컴포넌트로 분리
+// JointPanel(슬라이더)과 TcpDisplay(위치값)의 리렌더 사이클을 독립시킴
+function TcpDisplay() {
+  const tcpPosition = useRobotStore((s) => s.tcpPosition)
+  return (
+    <div style={card}>
+      <div style={sectionLabel}>TCP POSITION</div>
+      <div style={{ display: 'flex', gap: 12 }}>
+        {(['x', 'y', 'z'] as const).map((axis) => (
+          <div key={axis} style={{ flex: 1, textAlign: 'center' }}>
+            <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{axis.toUpperCase()}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tcp)', fontVariantNumeric: 'tabular-nums' }}>
+              {tcpPosition[axis]}m
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function JointPanel() {
   const joints = useRobotStore((s) => s.joints)
   const jointLimits = useRobotStore((s) => s.jointLimits)
-  const tcpPosition = useRobotStore((s) => s.tcpPosition)
   const setJoint = useRobotStore((s) => s.setJoint)
   const resetJoints = useRobotStore((s) => s.resetJoints)
   const addWaypoint = useRobotStore((s) => s.addWaypoint)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {/* TCP 위치 */}
-      <div style={card}>
-        <div style={sectionLabel}>TCP POSITION</div>
-        <div style={{ display: 'flex', gap: 12 }}>
-          {(['x', 'y', 'z'] as const).map((axis) => (
-            <div key={axis} style={{ flex: 1, textAlign: 'center' }}>
-              <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{axis.toUpperCase()}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tcp)', fontVariantNumeric: 'tabular-nums' }}>
-                {tcpPosition[axis]}m
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* TCP 위치 — 별도 컴포넌트로 격리 */}
+      <TcpDisplay />
 
       {/* 관절 슬라이더 */}
       {JOINT_NAMES.map((name, i) => {

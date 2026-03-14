@@ -57,6 +57,8 @@ export function RobotArm({ showWorkspace }: RobotArmProps) {
   )
   // 도착 후 다음 웨이포인트 전환 딜레이 플래그
   const arrivedRef = useRef(false)
+  // TCP 위치 갱신 프레임 카운터 — 60fps → ~10fps로 throttle
+  const tcpFrameRef = useRef(0)
 
   useFrame((_, delta) => {
     const { joints: target, isPlaying, advancePlayback } = useRobotStore.getState()
@@ -82,8 +84,9 @@ export function RobotArm({ showWorkspace }: RobotArmProps) {
     if (j5.current) j5.current.rotation.z = display.current[4]
     if (j6.current) j6.current.rotation.y = display.current[5]
 
-    // ── 3. TCP 월드 위치 ──────────────────────────────
-    if (tcp.current) {
+    // ── 3. TCP 월드 위치 (~10fps로 throttle) ─────────
+    // rerender-use-ref-transient-values: 매 프레임 Zustand 갱신 대신 6프레임마다 한 번만 UI에 반영
+    if (tcp.current && ++tcpFrameRef.current % 6 === 0) {
       const pos = new THREE.Vector3()
       tcp.current.getWorldPosition(pos)
       setTcpPosition({

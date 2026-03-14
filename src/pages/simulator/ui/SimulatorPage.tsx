@@ -4,7 +4,8 @@ import { ControlPanel } from '@widgets/control-panel'
 import { ThemeToggle } from '@features/theme-toggle'
 
 export function SimulatorPage() {
-  const waypoints = useRobotStore((s) => s.waypoints)
+  // rerender-derived-state: 배열 전체 대신 파생된 길이값만 구독
+  const waypointCount = useRobotStore((s) => s.waypoints.length)
   const isPlaying = useRobotStore((s) => s.isPlaying)
 
   return (
@@ -43,7 +44,7 @@ export function SimulatorPage() {
         <div style={{ width: 1, height: 20, background: 'var(--border)' }} />
 
         <span style={{ fontSize: 11, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-          웨이포인트: <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{waypoints.length}</span>
+          웨이포인트: <span style={{ color: 'var(--accent)', fontWeight: 700 }}>{waypointCount}</span>
         </span>
         <span style={{
           fontSize: 11,

@@ -1,6 +1,23 @@
 import { useRobotStore } from '@entities/robot'
 import type { Waypoint } from '@entities/robot'
 
+const card: React.CSSProperties = {
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border)',
+  borderRadius: 8,
+  padding: '10px 14px',
+}
+
+// rendering-hoist-jsx: 상태·props에 의존하지 않는 정적 JSX를 모듈 레벨로 끌어올림
+const RAPID_HEADER = (
+  <div style={card}>
+    <div style={{ color: '#79c0ff', fontSize: 11, fontFamily: 'monospace' }}>MODULE MainProgram</div>
+    <div style={{ color: '#a5d6ff', fontSize: 11, fontFamily: 'monospace', paddingLeft: 16 }}>
+      VAR robtarget pTarget;
+    </div>
+  </div>
+)
+
 export function ProgramPanel() {
   const waypoints = useRobotStore((s) => s.waypoints)
   const isPlaying = useRobotStore((s) => s.isPlaying)
@@ -14,13 +31,8 @@ export function ProgramPanel() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, height: '100%' }}>
-      {/* 코드 헤더 */}
-      <div style={card}>
-        <div style={{ color: '#79c0ff', fontSize: 11, fontFamily: 'monospace' }}>MODULE MainProgram</div>
-        <div style={{ color: '#a5d6ff', fontSize: 11, fontFamily: 'monospace', paddingLeft: 16 }}>
-          VAR robtarget pTarget;
-        </div>
-      </div>
+      {/* 코드 헤더 — 정적 JSX, 모듈 레벨 상수 참조 */}
+      {RAPID_HEADER}
 
       {/* 웨이포인트 목록 */}
       <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -132,13 +144,6 @@ function WaypointItem({ waypoint, index, isActive, onGoto, onRemove }: WaypointI
       </div>
     </div>
   )
-}
-
-const card: React.CSSProperties = {
-  background: 'var(--bg-card)',
-  border: '1px solid var(--border)',
-  borderRadius: 8,
-  padding: '10px 14px',
 }
 
 function btn(bg: string, color: string, border: string): React.CSSProperties {

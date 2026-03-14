@@ -9,6 +9,10 @@ const GRID_COLORS = {
   light: { cell: '#b0c4d8', section: '#88a8c4' },
 }
 
+// rerender-memo-with-default-value: 비원시 props를 모듈 레벨로 끌어올려 매 렌더마다 새 객체 생성 방지
+const CAMERA_CONFIG = { position: [3, 2.5, 3] as [number, number, number], fov: 45 }
+const SHADOW_MAP_SIZE = [2048, 2048] as [number, number]
+
 export function Viewport3D() {
   const [showWorkspace, setShowWorkspace] = useState(false)
   const resolved = useThemeStore((s) => s.resolved)
@@ -17,12 +21,12 @@ export function Viewport3D() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Canvas
-        camera={{ position: [3, 2.5, 3], fov: 45 }}
+        camera={CAMERA_CONFIG}
         style={{ background: 'var(--canvas-bg)' }}
         shadows
       >
         <ambientLight intensity={resolved === 'light' ? 0.7 : 0.4} />
-        <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow shadow-mapSize={[2048, 2048]} />
+        <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow shadow-mapSize={SHADOW_MAP_SIZE} />
         <pointLight position={[-3, 3, -3]} intensity={0.5} color="#4a90d9" />
         <pointLight position={[3, 1, -3]} intensity={0.3} color="#ff6b35" />
 
