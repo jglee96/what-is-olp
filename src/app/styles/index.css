@@ -1,19 +1,80 @@
-* {
+/* ── CSS 변수 (테마) ────────────────────────────────── */
+[data-theme='dark'] {
+  --bg-primary:   #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary:  #1c2128;
+  --bg-card:      #0d1117;
+  --border:       #21262d;
+  --border-hover: #30363d;
+  --text-primary:   #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted:     #484f58;
+  --accent:         #4a90d9;
+  --accent-dim:     #1f4068;
+  --accent-border:  #4a90d940;
+  --success:        #00cc66;
+  --success-dim:    #1a3a1a;
+  --warning:        #ff9500;
+  --danger:         #ff4444;
+  --danger-dim:     #3d1f1f;
+  --tcp:            #00ff88;
+  --canvas-bg:      linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+  --grid-cell:      #1e2d3d;
+  --grid-section:   #2a4060;
+}
+
+[data-theme='light'] {
+  --bg-primary:   #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary:  #eaeef2;
+  --bg-card:      #f6f8fa;
+  --border:       #d0d7de;
+  --border-hover: #b7bfc8;
+  --text-primary:   #1f2328;
+  --text-secondary: #57606a;
+  --text-muted:     #8c959f;
+  --accent:         #0969da;
+  --accent-dim:     #dbeafe;
+  --accent-border:  #0969da40;
+  --success:        #1a7f37;
+  --success-dim:    #d1fae5;
+  --warning:        #9a6700;
+  --danger:         #d1242f;
+  --danger-dim:     #fde8e8;
+  --tcp:            #0ca045;
+  --canvas-bg:      linear-gradient(180deg, #f0f4f8 0%, #e0e8f0 100%);
+  --grid-cell:      #b0c4d8;
+  --grid-section:   #88a8c4;
+}
+
+/* ── 리셋 ─────────────────────────────────────────── */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  background: #0d1117;
-  color: #e6edf3;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Segoe UI', system-ui, sans-serif;
   overflow: hidden;
   height: 100vh;
+  transition: background 0.2s, color 0.2s;
 }
 
 #root {
   height: 100vh;
+}
+
+/* ── 슬라이더 썸 ──────────────────────────────────── */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
 }
 
 input[type='range']::-webkit-slider-thumb {
@@ -21,7 +82,17 @@ input[type='range']::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #e6edf3;
+  background: var(--text-primary);
   cursor: pointer;
-  border: 2px solid #0d1117;
+  border: 2px solid var(--bg-primary);
+  transition: background 0.15s;
 }
+
+input[type='range']::-webkit-slider-thumb:hover {
+  background: var(--accent);
+}
+
+/* ── 스크롤바 ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }

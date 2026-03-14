@@ -19,38 +19,39 @@ export function ControlPanel() {
   return (
     <div style={{
       width: 300,
-      background: '#161b22',
-      borderLeft: '1px solid #21262d',
+      background: 'var(--bg-secondary)',
+      borderLeft: '1px solid var(--border)',
       display: 'flex',
       flexDirection: 'column',
       flexShrink: 0,
     }}>
-      {/* 탭 */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #21262d', flexShrink: 0 }}>
-        {TABS.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            style={{
-              flex: 1,
-              padding: '10px 0',
-              background: activeTab === tab.key ? '#1c2128' : 'transparent',
-              border: 'none',
-              borderBottom: `2px solid ${activeTab === tab.key ? '#4a90d9' : 'transparent'}`,
-              color: activeTab === tab.key ? '#e6edf3' : '#8b949e',
-              cursor: 'pointer',
-              fontSize: 12,
-              fontFamily: 'inherit',
-              fontWeight: activeTab === tab.key ? 600 : 400,
-              transition: 'all 0.15s',
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+        {TABS.map((tab) => {
+          const active = activeTab === tab.key
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              style={{
+                flex: 1,
+                padding: '10px 0',
+                background: active ? 'var(--bg-tertiary)' : 'transparent',
+                border: 'none',
+                borderBottom: `2px solid ${active ? 'var(--accent)' : 'transparent'}`,
+                color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                fontSize: 12,
+                fontFamily: 'inherit',
+                fontWeight: active ? 600 : 400,
+                transition: 'all 0.15s',
+              }}
+            >
+              {tab.label}
+            </button>
+          )
+        })}
       </div>
 
-      {/* 콘텐츠 */}
       <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
         {activeTab === 'joints'  && <JointPanel />}
         {activeTab === 'program' && <ProgramPanel />}

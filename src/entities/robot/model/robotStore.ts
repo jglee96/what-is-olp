@@ -18,7 +18,6 @@ export const useRobotStore = create<RobotStore>((set, get) => ({
   waypoints: [],
   isPlaying: false,
   playIndex: 0,
-  playIntervalId: null,
   tcpPosition: { x: '0.000', y: '0.000', z: '0.000' },
   activeTab: 'joints',
 
@@ -32,12 +31,12 @@ export const useRobotStore = create<RobotStore>((set, get) => ({
 
   addWaypoint: () => {
     const { joints, waypoints } = get()
-    const newWaypoint: Waypoint = {
+    const wp: Waypoint = {
       id: Date.now(),
       name: `P${waypoints.length + 1}`,
       joints: [...joints],
     }
-    set({ waypoints: [...waypoints, newWaypoint] })
+    set({ waypoints: [...waypoints, wp] })
   },
 
   removeWaypoint: (id) =>
@@ -45,31 +44,30 @@ export const useRobotStore = create<RobotStore>((set, get) => ({
 
   clearWaypoints: () => set({ waypoints: [] }),
 
-  goToWaypoint: (waypoint) => set({ joints: [...waypoint.joints] }),
+  goToWaypoint: (wp) => set({ joints: [...wp.joints] }),
 
+  // 재생 시작: playIndex=0 에 해당하는 joints 설정 → useFrame이 lerp 시작
   startPlayback: () => {
-    const { waypoints, isPlaying } = get()
-    if (isPlaying || waypoints.length < 2) return
-
-    let idx = 0
-    const intervalId = setInterval(() => {
-      const { waypoints } = get()
-      if (idx >= waypoints.length) {
-        clearInterval(intervalId)
-        set({ isPlaying: false, playIntervalId: null })
-        return
-      }
-      set({ joints: [...waypoints[idx].joints], playIndex: idx })
-      idx++
-    }, 800)
-
-    set({ isPlaying: true, playIntervalId: intervalId, playIndex: 0 })
+    const { waypoints } = get()
+    if (waypoints.length < 2) return
+    set({
+      isPlaying: true,
+      playIndex: 0,
+      joints: [...waypoints[0].joints],
+    })
   },
 
-  stopPlayback: () => {
-    const { playIntervalId } = get()
-    if (playIntervalId) clearInterval(playIntervalId)
-    set({ isPlaying: false, playIntervalId: null })
+  stopPlayback: () => set({ isPlaying: false }),
+
+  // RobotArm의 useFrame이 목표 도달 시 호출
+  advancePlayback: () => {
+    const { playIndex, waypoints } = get()
+    const next = playIndex + 1
+    if (next >= waypoints.length) {
+      set({ isPlaying: false })
+      return
+    }
+    set({ playIndex: next, joints: [...waypoints[next].joints] })
   },
 
   setActiveTab: (tab) => set({ activeTab: tab }),

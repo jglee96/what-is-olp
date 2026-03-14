@@ -16,12 +16,11 @@ export interface TcpPosition {
 }
 
 export interface RobotState {
-  joints: number[]
+  joints: number[]        // 목표 관절각 (슬라이더/재생이 설정)
   jointLimits: JointLimit[]
   waypoints: Waypoint[]
   isPlaying: boolean
   playIndex: number
-  playIntervalId: ReturnType<typeof setInterval> | null
   tcpPosition: TcpPosition
   activeTab: 'joints' | 'program' | 'io'
 }
@@ -35,6 +34,7 @@ export interface RobotActions {
   goToWaypoint: (waypoint: Waypoint) => void
   startPlayback: () => void
   stopPlayback: () => void
+  advancePlayback: () => void  // useFrame에서 호출
   setActiveTab: (tab: RobotState['activeTab']) => void
   setTcpPosition: (pos: TcpPosition) => void
 }

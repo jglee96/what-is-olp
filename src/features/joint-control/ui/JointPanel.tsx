@@ -12,15 +12,15 @@ export function JointPanel() {
   const addWaypoint = useRobotStore((s) => s.addWaypoint)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       {/* TCP 위치 */}
-      <div style={cardStyle}>
-        <div style={labelStyle}>TCP POSITION</div>
+      <div style={card}>
+        <div style={sectionLabel}>TCP POSITION</div>
         <div style={{ display: 'flex', gap: 12 }}>
           {(['x', 'y', 'z'] as const).map((axis) => (
             <div key={axis} style={{ flex: 1, textAlign: 'center' }}>
-              <div style={{ fontSize: 10, color: '#8b949e' }}>{axis.toUpperCase()}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#00ff88', fontVariantNumeric: 'tabular-nums' }}>
+              <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{axis.toUpperCase()}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tcp)', fontVariantNumeric: 'tabular-nums' }}>
                 {tcpPosition[axis]}m
               </div>
             </div>
@@ -37,7 +37,7 @@ export function JointPanel() {
           <div key={i} style={{ marginBottom: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
               <span style={{ fontSize: 12, color, fontWeight: 600 }}>{name}</span>
-              <span style={{ fontSize: 12, color: '#e6edf3', fontVariantNumeric: 'tabular-nums' }}>
+              <span style={{ fontSize: 12, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
                 {joints[i].toFixed(1)}°
               </span>
             </div>
@@ -50,52 +50,51 @@ export function JointPanel() {
               onChange={(e) => setJoint(i, parseFloat(e.target.value))}
               style={{
                 width: '100%',
-                height: 4,
-                appearance: 'none',
-                background: `linear-gradient(to right, ${color} ${pct}%, #21262d ${pct}%)`,
-                borderRadius: 2,
-                outline: 'none',
-                cursor: 'pointer',
+                background: `linear-gradient(to right, ${color} ${pct}%, var(--border) ${pct}%)`,
               }}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-              <span style={{ fontSize: 10, color: '#484f58' }}>{min}°</span>
-              <span style={{ fontSize: 10, color: '#484f58' }}>{max}°</span>
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{min}°</span>
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{max}°</span>
             </div>
           </div>
         )
       })}
 
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-        <button onClick={resetJoints} style={btnStyle('#21262d', '#8b949e')}>홈 위치</button>
-        <button onClick={addWaypoint} style={btnStyle('#1f4068', '#4a90d9')}>+ 경로 추가</button>
+        <button onClick={resetJoints} style={btn('var(--bg-tertiary)', 'var(--text-secondary)', 'var(--border)')}>
+          홈 위치
+        </button>
+        <button onClick={addWaypoint} style={btn('var(--accent-dim)', 'var(--accent)', 'var(--accent-border)')}>
+          + 경로 추가
+        </button>
       </div>
     </div>
   )
 }
 
-const cardStyle: React.CSSProperties = {
-  background: '#0d1117',
-  border: '1px solid #21262d',
+const card: React.CSSProperties = {
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border)',
   borderRadius: 8,
   padding: '10px 14px',
   marginBottom: 12,
 }
 
-const labelStyle: React.CSSProperties = {
+const sectionLabel: React.CSSProperties = {
   fontSize: 11,
-  color: '#8b949e',
+  color: 'var(--text-secondary)',
   marginBottom: 6,
   fontWeight: 600,
   letterSpacing: '0.05em',
 }
 
-function btnStyle(bg: string, color: string): React.CSSProperties {
+function btn(bg: string, color: string, border: string): React.CSSProperties {
   return {
     flex: 1,
     padding: '8px 12px',
     background: bg,
-    border: `1px solid ${color}40`,
+    border: `1px solid ${border}`,
     color,
     borderRadius: 6,
     cursor: 'pointer',
