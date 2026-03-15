@@ -1,7 +1,4 @@
-import { useRobotStore } from '@entities/robot'
-
-const JOINT_NAMES = ['J1 베이스', 'J2 숄더', 'J3 엘보우', 'J4 손목롤', 'J5 손목피치', 'J6 손목요'] as const
-const JOINT_COLORS = ['#4a90d9', '#357abd', '#2a6099', '#1e4d7a', '#ff6b35', '#ff9500'] as const
+import { useRobotStore, JOINT_NAMES, JOINT_COLORS } from '@entities/robot'
 
 // rerender-memo: ~10fps로 갱신되는 TCP 표시를 별도 컴포넌트로 분리
 // JointPanel(슬라이더)과 TcpDisplay(위치값)의 리렌더 사이클을 독립시킴

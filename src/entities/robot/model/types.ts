@@ -23,6 +23,7 @@ export interface RobotState {
   playIndex: number
   tcpPosition: TcpPosition
   activeTab: 'joints' | 'program' | 'io'
+  selectedJoint: number | null
 }
 
 export interface RobotActions {
@@ -37,6 +38,7 @@ export interface RobotActions {
   advancePlayback: () => void  // useFrame에서 호출
   setActiveTab: (tab: RobotState['activeTab']) => void
   setTcpPosition: (pos: TcpPosition) => void
+  setSelectedJoint: (index: number | null) => void
 }
 
 export type RobotStore = RobotState & RobotActions

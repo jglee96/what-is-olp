@@ -20,6 +20,7 @@ export const useRobotStore = create<RobotStore>((set, get) => ({
   playIndex: 0,
   tcpPosition: { x: '0.000', y: '0.000', z: '0.000' },
   activeTab: 'joints',
+  selectedJoint: null,
 
   setJoint: (index, value) => {
     const joints = [...get().joints]
@@ -73,4 +74,11 @@ export const useRobotStore = create<RobotStore>((set, get) => ({
   setActiveTab: (tab) => set({ activeTab: tab }),
 
   setTcpPosition: (pos: TcpPosition) => set({ tcpPosition: pos }),
+
+  setSelectedJoint: (index) => set({ selectedJoint: index }),
 }))
+
+// ── E2E test helpers (DEV only) ───────────────────────────────────────────────
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+  ;(window as Window & { __robotStore?: typeof useRobotStore }).__robotStore = useRobotStore
+}

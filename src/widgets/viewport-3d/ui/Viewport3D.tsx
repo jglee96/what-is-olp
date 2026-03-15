@@ -1,8 +1,21 @@
-import { Suspense, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Suspense, useState, useEffect } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useRobotStore } from '@entities/robot'
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport } from '@react-three/drei'
 import { RobotArm } from '@entities/robot'
 import { useThemeStore } from '@shared/lib/theme'
+
+// ── E2E test monitor (DEV only) ───────────────────────────────────────────────
+// Exposes OrbitControls enabled state as window.__orbitEnabled for Playwright tests
+function TestMonitor() {
+  const controls = useThree((s) => s.controls) as { enabled: boolean } | null
+  useFrame(() => {
+    if (import.meta.env.DEV) {
+      ;(window as Window & { __orbitEnabled?: boolean }).__orbitEnabled = controls?.enabled ?? true
+    }
+  })
+  return null
+}
 
 const GRID_COLORS = {
   dark:  { cell: '#1e2d3d', section: '#2a4060' },
@@ -18,12 +31,21 @@ export function Viewport3D() {
   const resolved = useThemeStore((s) => s.resolved)
   const grid = GRID_COLORS[resolved]
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') useRobotStore.getState().setSelectedJoint(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Canvas
         camera={CAMERA_CONFIG}
         style={{ background: 'var(--canvas-bg)' }}
         shadows
+        onPointerMissed={() => useRobotStore.getState().setSelectedJoint(null)}
       >
         <ambientLight intensity={resolved === 'light' ? 0.7 : 0.4} />
         <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow shadow-mapSize={SHADOW_MAP_SIZE} />
@@ -53,6 +75,7 @@ export function Viewport3D() {
         </Suspense>
 
         <OrbitControls makeDefault minDistance={1} maxDistance={10} target={[0, 0.8, 0]} />
+        {import.meta.env.DEV && <TestMonitor />}
 
         <GizmoHelper alignment="bottom-right" margin={[60, 60]}>
           <GizmoViewport axisColors={['#ff4444', '#44ff44', '#4444ff']} labelColor={resolved === 'light' ? '#333' : 'white'} />
